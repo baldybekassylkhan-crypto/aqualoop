@@ -1,1040 +1,310 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AquaLoop — Closed-loop Water System</title>
-  <style>
-    :root{
-      --bg:#050B18;
-      --w:rgba(255,255,255,.08);
-      --w2:rgba(255,255,255,.12);
-      --txt:rgba(255,255,255,.90);
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.55);
-      --cyan:rgba(125,255,255,.90);
-      --ring:rgba(255,255,255,.10);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      background:var(--bg);
-      color:var(--txt);
-    }
-    a{color:inherit;text-decoration:none}
-    .container{max-width:1100px;margin:0 auto;padding:0 16px}
-    .section{padding:80px 0}
-    .glass{
-      background:rgba(255,255,255,.08);
-      backdrop-filter: blur(18px);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: 0 20px 80px rgba(0,0,0,.35);
-      border-radius:24px;
-      position:relative;
-      overflow:hidden;
-    }
-    .glass:before{
-      content:"";
-      position:absolute;inset:0;
-      opacity:.55;
-      background: radial-gradient(ellipse at top, rgba(120,255,255,0.12), transparent 55%);
-      pointer-events:none;
-    }
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:6px 12px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.07);
-      font-size:12px;color:rgba(255,255,255,.85);
-      white-space:nowrap;
-    }
-    .h1{font-size:42px;line-height:1.1;font-weight:650;letter-spacing:-0.02em;margin:12px 0 0}
-    .lead{margin:14px 0 0;font-size:16px;line-height:1.6;color:var(--muted)}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:12px 18px;border-radius:18px;
-      font-size:14px;font-weight:650;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.08);
-      transition:.2s ease;
-    }
-    .btn:hover{background:rgba(255,255,255,.10)}
-    .btnPrimary{
-      border:none;
-      background: linear-gradient(90deg, rgba(180,255,255,.85), rgba(70,160,255,.85));
-      color:#050B18;
-      box-shadow: 0 16px 40px rgba(0,190,255,.12);
-    }
-    .btnPrimary:hover{opacity:.96}
-    .grid{display:grid;gap:16px}
-    @media(min-width:900px){ .grid2{grid-template-columns:1.1fr .9fr} }
-    .statGrid{display:grid;gap:12px}
-    @media(min-width:600px){ .statGrid{grid-template-columns:repeat(3,1fr)} }
-    .stat{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
-      border-radius:16px;padding:14px;
-    }
-    .stat .k{font-size:18px;font-weight:700}
-    .stat .v{font-size:12px;color:rgba(255,255,255,.60);margin-top:6px}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZHINO — Sustainable AI Orchestration</title>
 
-    /* Sticky impact bar */
-    .sticky{
-      position:sticky;top:0;z-index:60;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background:rgba(5,11,24,.70);
-      backdrop-filter: blur(14px);
-    }
-    .stickyInner{
-      display:flex;flex-wrap:wrap;gap:10px;
-      align-items:center;justify-content:space-between;
-      padding:10px 0;
-    }
-    .small{font-size:12px;color:rgba(255,255,255,.70)}
-    .strong{font-weight:700;color:rgba(255,255,255,.95)}
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    /* Floating top nav */
-    .navWrap{
-      position:fixed;left:0;right:0;top:52px;z-index:55;
-      pointer-events:none;
-    }
-    .navBar{
-      pointer-events:auto;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 0;
-    }
-    .brand{
-      display:flex;gap:12px;align-items:center;
-    }
-    .logo{
-      width:40px;height:40px;border-radius:14px;
-      background: linear-gradient(135deg, rgba(120,255,255,.15), rgba(0,120,255,.15));
-      border:1px solid rgba(255,255,255,.10);
-      display:flex;align-items:center;justify-content:center;
-    }
-    .menu{
-      display:none;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      border-radius:18px;
-      padding:8px;
-      gap:4px;
-      backdrop-filter: blur(16px);
-      align-items:center;
-    }
-    .menu a{
-      padding:10px 12px;border-radius:14px;
-      font-size:12px;font-weight:650;
-      color:rgba(255,255,255,.75);
-    }
-    .menu a:hover{background:rgba(255,255,255,.10);color:rgba(255,255,255,.95)}
-    @media(min-width:900px){ .menu{display:flex} }
-    .menu .cta{
-      margin-left:6px;
-      background: linear-gradient(90deg, rgba(180,255,255,.80), rgba(70,160,255,.80));
-      color:#050B18;
-    }
+<!-- MAP -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    /* Hero background */
-    .hero{
-      position:relative;
-      padding:110px 0 40px;
-      overflow:hidden;
-    }
-    .hero:before{
-      content:"";
-      position:absolute;inset:0;
-      opacity:.35;
-      background:
-        radial-gradient(ellipse at top, rgba(120,255,255,0.14), transparent 55%),
-        radial-gradient(ellipse at bottom, rgba(0,120,255,0.18), transparent 50%);
-      pointer-events:none;
-    }
-    .blob1,.blob2{
-      position:absolute;border-radius:999px;filter:blur(60px);
-      pointer-events:none;
-    }
-    .blob1{width:480px;height:480px;left:-140px;top:80px;background:rgba(0,255,255,.12)}
-    .blob2{width:560px;height:560px;right:-180px;top:40px;background:rgba(0,120,255,.18)}
-    .noise{
-      position:absolute;inset:0;opacity:.10;mix-blend-mode:overlay;pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.8'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='140'%20height='140'%20filter='url(%23n)'%20opacity='.35'/%3E%3C/svg%3E");
-    }
+<style>
+body { font-family:'Inter',sans-serif; background:#f5f7fb; color:#1f2937; }
 
-    /* Cards */
-    .card{padding:22px}
-    .card h3{margin:10px 0 0;font-size:16px}
-    .card p{margin:10px 0 0;font-size:13px;line-height:1.6;color:var(--muted)}
-    .cards3{display:grid;gap:16px}
-    @media(min-width:850px){ .cards3{grid-template-columns:repeat(3,1fr)} }
-    .cards2{display:grid;gap:16px}
-    @media(min-width:850px){ .cards2{grid-template-columns:repeat(2,1fr)} }
+/* Freedom-like soft gradient */
+.hero-gradient {
+background: radial-gradient(circle at 20% 30%, #dbeafe, #f5f7fb 40%),
+            linear-gradient(120deg,#e0f2fe,#f5f7fb,#dcfce7);
+}
 
-    /* Section title */
-    .secTitle{text-align:center;max-width:760px;margin:0 auto 40px}
-    .secTitle h2{margin:12px 0 0;font-size:34px;letter-spacing:-0.02em}
-    .secTitle p{margin:12px 0 0;color:var(--muted);line-height:1.6}
+.glass {
+background: rgba(255,255,255,0.7);
+backdrop-filter: blur(14px);
+border:1px solid rgba(0,0,0,0.05);
+box-shadow:0 10px 30px rgba(0,0,0,0.05);
+position: relative;
+}
 
-    /* How steps */
-    .steps{display:grid;gap:12px}
-    @media(min-width:900px){ .steps{grid-template-columns:repeat(6,1fr)} }
-    .step{padding:18px;border-radius:22px}
-    .step .n{font-size:13px;font-weight:700;margin-top:10px}
-    .step .d{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.6}
-    .bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:14px}
-    .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg, rgba(180,255,255,.8), rgba(70,160,255,.8));transition:width .45s ease}
-    .step:hover .bar > i{width:100%}
+.card {
+background:white;
+border-radius:16px;
+padding:28px;
+box-shadow:0 8px 24px rgba(0,0,0,0.06);
+transition:.25s ease;
+}
 
-    .addons{display:grid;gap:12px;margin-top:16px}
-    @media(min-width:900px){ .addons{grid-template-columns:repeat(4,1fr)} }
+.card:hover {
+transform:translateY(-6px);
+box-shadow:0 20px 50px rgba(0,0,0,0.12);
+}
 
-    /* Calculator */
-    .calcGrid{display:grid;gap:18px}
-    @media(min-width:980px){ .calcGrid{grid-template-columns: 2fr 3fr} }
-    .field{display:grid;gap:8px}
-    .field label{font-size:12px;color:rgba(255,255,255,.70);font-weight:650}
-    .input,.select{
-      width:100%;
-      padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
-      outline:none;
-    }
-    .input:focus,.select:focus{border-color:rgba(180,255,255,.35);background:rgba(255,255,255,.08)}
-    .toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .tbtn{
-      padding:12px 14px;border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.75);
-      cursor:pointer;
-      transition:.2s ease;
-      font-weight:650;
-    }
-    .tbtn.active{
-      border-color:rgba(180,255,255,.35);
-      background:rgba(255,255,255,.10);
-      color:rgba(255,255,255,.95);
-    }
+.btn-primary {
+background: linear-gradient(135deg,#22c55e,#3b82f6);
+color:white;
+padding:14px 26px;
+border-radius:12px;
+font-weight:600;
+transition:.25s;
+}
 
-    .metrics{display:grid;gap:12px}
-    @media(min-width:780px){ .metrics{grid-template-columns:repeat(2,1fr)} }
-    .metric{padding:18px}
-    .metric .t{font-size:12px;color:rgba(255,255,255,.70);font-weight:650}
-    .metric .v{margin-top:10px;font-size:22px;font-weight:750;letter-spacing:-0.02em}
-    .metric .hint{margin-top:10px;font-size:11px;color:rgba(255,255,255,.55)}
+.btn-primary:hover { opacity:.9; transform:translateY(-2px); }
 
-    .dash{padding:20px;margin-top:12px}
-    .dashHead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
-    .dashHead .h{font-size:14px;font-weight:750}
-    .dashHead .s{font-size:12px;color:rgba(255,255,255,.60)}
-    canvas{width:100%;height:220px;display:block}
-
-    /* CTA form */
-    .ctaBox{border-radius:28px;padding:26px}
-    .ctaBox:before{
-      opacity:.70;
-      background:
-        radial-gradient(ellipse at top, rgba(120,255,255,0.18), transparent 55%),
-        radial-gradient(ellipse at bottom, rgba(0,120,255,0.22), transparent 50%);
-    }
-    .formCard{
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.25);
-      backdrop-filter: blur(14px);
-      padding:18px;
-    }
-    .ok{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.07);
-      font-size:12px;
-      color:rgba(255,255,255,.85);
-    }
-
-    .footerFade{height:90px;background:linear-gradient(to bottom, transparent, rgba(5,11,24,1))}
-  </style>
+#map { height:420px; border-radius:16px; }
+</style>
 </head>
+
 <body>
 
-  <!-- Sticky impact bar -->
-  <div class="sticky">
-    <div class="container">
-      <div class="stickyInner">
-        <div class="small">
-          💧 <span style="color:rgba(255,255,255,.70)">Мы уже сэкономили:</span>
-          <span id="liters" class="strong">4 250 000</span> <span class="strong">литров воды</span>
-        </div>
-        <div class="small">
-          <span class="small" style="display:inline-flex;gap:10px;align-items:center">
-            🍃 CO₂ eq: <span id="co2" class="strong">158 000</span> кг <span style="color:rgba(255,255,255,.45)">(оценка)</span>
-          </span>
-          <a class="btn" href="#calculator" style="margin-left:10px;padding:8px 12px;border-radius:999px;font-size:12px">
-            Рассчитать эффект →
-          </a>
-        </div>
-      </div>
-    </div>
+<!-- NAV -->
+<header class="fixed top-0 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200 z-50">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<h1 class="text-xl font-semibold bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">ZHINO</h1>
+<nav class="space-x-8 text-sm text-slate-600">
+<a href="#problem" class="hover:text-black">Проблема</a>
+<a href="#solution" class="hover:text-black">Решение</a>
+<a href="#mapSection" class="hover:text-black">География</a>
+<a href="#advantages" class="hover:text-black">Преимущества</a>
+<a href="#demo" class="hover:text-black">Демо</a>
+</nav>
+</div>
+</header>
+
+<!-- HERO (с кнопкой пилота и картинкой) -->
+<section class="hero-gradient pt-32 pb-24">
+<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+
+<div>
+<h1 class="text-5xl font-semibold leading-tight">
+Экологичная маршрутизация
+<span class="bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">AI‑вычислений</span>
+</h1>
+
+<p class="mt-6 text-lg text-slate-600">
+ZHINO направляет AI‑нагрузку в те дата‑центры, где прямо сейчас
+ниже потребление воды, энергии и CO₂ — автоматически.
+</p>
+
+<!-- Кнопка запроса пилота -->
+<button class="btn-primary mt-8" id="pilotButton">Запросить пилот</button>
+</div>
+
+<!-- Блок с эффектом и картинкой -->
+<div class="glass rounded-2xl p-10 relative">
+<!-- Картинка сверху справа -->
+<img src="water-icon.png" alt="Water" class="absolute top-4 right-4 w-12 h-12">
+
+<p class="text-sm text-slate-500">Эффект оркестрации</p>
+<h3 class="text-3xl font-semibold mt-2">До −30% воды</h3>
+<p class="text-slate-600 mt-2">Без изменений моделей и инфраструктуры</p>
+</div>
+
+</div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="py-24">
+<div class="max-w-6xl mx-auto px-6 text-center">
+<h2 class="text-3xl font-semibold mb-14">Сегодня AI выполняется без учёта устойчивости</h2>
+
+<div class="grid md:grid-cols-3 gap-8">
+<div class="card">💧 Огромный расход воды на охлаждение</div>
+<div class="card">🌍 Разный углеродный след одного запроса</div>
+<div class="card">⚙️ Routing оптимизирует скорость, а не экологию</div>
+</div>
+</div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution" class="py-24 bg-slate-50">
+<div class="max-w-4xl mx-auto px-6 text-center">
+<h2 class="text-3xl font-semibold mb-6">Что делает ZHINO</h2>
+<p class="text-lg text-slate-600 leading-relaxed">
+Мы добавляем интеллектуальный слой между AI‑сервисом и регионами вычислений.
+ZHINO анализирует климат, источник энергии и эффективность охлаждения
+— и выбирает оптимальную точку выполнения.
+</p>
+</div>
+</section>
+
+<!-- MAP -->
+<section id="mapSection" class="py-24">
+<div class="max-w-6xl mx-auto px-6">
+<h2 class="text-3xl font-semibold text-center mb-14">Где считать — имеет значение</h2>
+
+<div class="grid md:grid-cols-2 gap-10 items-center">
+<div id="map"></div>
+
+<div class="card">
+<h3 id="dcName" class="text-2xl mb-4">Выберите дата‑центр</h3>
+<p>Температура: <span id="temp">—</span></p>
+<p>Энергия: <span id="energy">—</span></p>
+<p>Вода: <span id="waterImpact">—</span></p>
+<p>CO₂: <span id="co2Impact">—</span></p>
+<p class="mt-4 text-green-600 font-medium" id="status"></p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ADVANTAGES -->
+<section id="advantages" class="py-24 bg-slate-50">
+<div class="max-w-6xl mx-auto px-6">
+<h2 class="text-3xl font-semibold text-center mb-14">Преимущества</h2>
+
+<div class="grid md:grid-cols-2 gap-8">
+<div class="card">Интеграция за дни, а не месяцы</div>
+<div class="card">Снижение OPEX инфраструктуры</div>
+<div class="card">Прозрачная ESG‑метрика для отчётности</div>
+<div class="card">Работает с любыми облаками и LLM</div>
+</div>
+</div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="py-24">
+<div class="max-w-3xl mx-auto px-6 text-center">
+<h2 class="text-3xl font-semibold mb-10">Симуляция эффекта</h2>
+
+<div class="card">
+<input id="requests" type="range" min="100" max="2000" value="1000" class="w-full">
+<p class="mt-6">Экономия воды: <span id="water" class="text-green-600"></span></p>
+<p>Снижение CO₂: <span id="co2" class="text-green-600"></span></p>
+</div>
+</div>
+</section>
+
+<!-- PILOT FORM MODAL -->
+<div id="pilotModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl p-8 max-w-md w-full relative">
+    <button id="closePilot" class="absolute top-4 right-4 text-gray-400 hover:text-black text-xl">&times;</button>
+    <h2 class="text-2xl font-semibold mb-4 text-center">Запросить пилот</h2>
+    <form id="pilotForm" class="grid gap-4">
+      <input required type="text" placeholder="Компания" class="p-4 border rounded-xl">
+      <input required type="email" placeholder="Email" class="p-4 border rounded-xl">
+      <input type="text" placeholder="Объём GPU / запросов в день" class="p-4 border rounded-xl">
+      <textarea placeholder="Кратко опишите инфраструктуру" class="p-4 border rounded-xl"></textarea>
+      <button type="submit" class="btn-primary">Отправить запрос</button>
+    </form>
+    <p id="pilotSuccess" class="text-green-600 text-center mt-6 hidden">
+      Спасибо! Команда ZHINO свяжется с вами для расчёта пилота.
+    </p>
   </div>
+</div>
+
+<footer class="py-10 text-center text-slate-400">
+ZHINO — Sustainable AI Orchestration Layer
+</footer>
+
+<script>
+// MAP INIT
+const map = L.map('map').setView([30,10],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+// EXPANDED DATA CENTER SET
+const dcs = [
+{ name:"Финляндия (Helsinki)", coords:[60.17,24.94], temp:"8°C", energy:"100% ВИЭ", water:"очень низкое", co2:"минимальный" },
+{ name:"Швеция (Luleå)", coords:[65.58,22.15], temp:"5°C", energy:"Гидро", water:"низкое", co2:"очень низкий" },
+{ name:"Ирландия (Dublin)", coords:[53.34,-6.26], temp:"11°C", energy:"Ветер", water:"низкое", co2:"низкий" },
+{ name:"Канада (Quebec)", coords:[46.81,-71.21], temp:"6°C", energy:"Гидро", water:"низкое", co2:"очень низкий" },
+{ name:"Сингапур", coords:[1.29,103.85], temp:"29°C", energy:"Смешанная", water:"среднее", co2:"средний" },
+{ name:"Германия (Frankfurt)", coords:[50.11,8.68], temp:"14°C", energy:"EU Grid", water:"среднее", co2:"средний" },
+{ name:"США (Arizona)", coords:[33.45,-112.07], temp:"34°C", energy:"Газ", water:"очень высокое", co2:"высокий" },
+{ name:"ОАЭ (Dubai)", coords:[25.20,55.27], temp:"38°C", energy:"Газ", water:"экстремально высокое", co2:"очень высокий" }
+];
+
+let selectedMarkers = [];
+let routeLine;
+let movingMarker;
+
+// CREATE MARKERS
+dcs.forEach(dc => {
+const marker = L.circleMarker(dc.coords,{radius:7,color:'#22c55e'}).addTo(map);
+
+marker.on('click',()=>selectDC(dc, marker));
+});
+
+function selectDC(dc, marker){
+if(selectedMarkers.length===2){
+selectedMarkers=[];
+if(routeLine) map.removeLayer(routeLine);
+if(movingMarker) map.removeLayer(movingMarker);
+}
+
+selectedMarkers.push({dc, marker});
+
+// Update info panel
+ dcName.innerText = dc.name;
+ temp.innerText = dc.temp;
+ energy.innerText = dc.energy;
+ waterImpact.innerText = dc.water;
+ co2Impact.innerText = dc.co2;
+ status.innerText = "Выбран для сравнения";
+
+if(selectedMarkers.length===2){
+animateRoute(selectedMarkers[0].dc, selectedMarkers[1].dc);
+}
+}
+
+// ANIMATION OF AI REQUEST ROUTING
+function animateRoute(from,to){
+if(routeLine) map.removeLayer(routeLine);
+if(movingMarker) map.removeLayer(movingMarker);
+
+routeLine = L.polyline([from.coords,to.coords],{color:'#3b82f6',weight:3,dashArray:'6 6'}).addTo(map);
+
+let progress = 0;
+movingMarker = L.circleMarker(from.coords,{radius:8,color:'#3b82f6'}).addTo(map);
+
+const interval = setInterval(()=>{
+progress += 0.02;
+
+const lat = from.coords[0] + (to.coords[0]-from.coords[0])*progress;
+const lng = from.coords[1] + (to.coords[1]-from.coords[1])*progress;
+
+movingMarker.setLatLng([lat,lng]);
+
+if(progress>=1){
+clearInterval(interval);
+status.innerText = "ZHINO перенаправил нагрузку в более эффективный регион";
+}
+},30);
+}
+
+// DEMO SLIDER
+requests.oninput = () => {
+const v = requests.value;
+water.innerText = (v*1.8).toFixed(0)+" м³ (-30%)";
+co2.innerText = (v*0.35).toFixed(0)+" т (-22%)";
+};
+requests.oninput();
+
+// PILOT MODAL
+const pilotButton = document.getElementById('pilotButton');
+const pilotModal = document.getElementById('pilotModal');
+const closePilot = document.getElementById('closePilot');
+const pilotForm = document.getElementById('pilotForm');
+const pilotSuccess = document.getElementById('pilotSuccess');
+
+pilotButton.addEventListener('click', () => {
+  pilotModal.classList.remove('hidden');
+});
+
+closePilot.addEventListener('click', () => {
+  pilotModal.classList.add('hidden');
+  pilotForm.style.display = 'grid';
+  pilotSuccess.classList.add('hidden');
+});
+
+pilotForm.addEventListener('submit', e => {
+  e.preventDefault();
+  pilotForm.style.display = 'none';
+  pilotSuccess.classList.remove('hidden');
+});
+</script>
 
-  <!-- Floating nav -->
-  <div class="navWrap">
-    <div class="container">
-      <div class="navBar">
-        <div class="brand">
-          <div class="logo">♻️</div>
-          <div>
-            <div style="font-size:13px;font-weight:750;line-height:1.1">AquaLoop</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.60)">Water Reuse System</div>
-          </div>
-        </div>
-
-        <div class="menu">
-          <a href="#problem">Проблема</a>
-          <a href="#how">Как работает</a>
-          <a href="#calculator">Калькулятор</a>
-          <a href="#model">Модель</a>
-          <a href="#impact">Эффект</a>
-          <a class="btn cta" href="#cta" style="padding:10px 14px;border-radius:14px">Получить предложение →</a>
-        </div>
-
-        <a class="btn" href="#cta" style="font-size:12px;border-radius:14px">CTA →</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- HERO -->
-  <header class="hero">
-    <div class="noise"></div>
-    <div class="blob1"></div>
-    <div class="blob2"></div>
-
-    <div class="container">
-      <div class="grid grid2" style="align-items:center;gap:24px;position:relative;z-index:2">
-        <div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <span class="pill">💧 Water Reuse • Modular • IoT</span>
-            <span class="pill">🍃 ESG-ready</span>
-          </div>
-
-          <h1 class="h1">AquaLoop — замкнутый водооборот для туризма в засушливых и удалённых регионах</h1>
-          <p class="lead">
-            Модульная система повторного использования серой воды (души, раковины) с
-            многоступенчатой очисткой и мониторингом. Экономия до <b style="color:#fff">60%</b>
-            свежей воды — без компромиссов в комфорте.
-          </p>
-
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
-            <a class="btn btnPrimary" href="#calculator">Рассчитать экономию →</a>
-            <a class="btn" href="#how">Как это работает</a>
-          </div>
-
-          <div class="statGrid" style="margin-top:18px">
-            <div class="stat"><div class="k">до 60%</div><div class="v">меньше потребления</div></div>
-            <div class="stat"><div class="k">24/7</div><div class="v">мониторинг IoT</div></div>
-            <div class="stat"><div class="k">модули</div><div class="v">масштабирование</div></div>
-          </div>
-        </div>
-
-        <div class="glass card">
-          <div style="position:relative;z-index:1">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <div>
-                <div style="font-size:14px;font-weight:750">Live Water Loop</div>
-                <div class="small">Визуализация циркуляции и контроля</div>
-              </div>
-              <span class="pill">📈 Impact</span>
-            </div>
-
-            <div class="grid" style="margin-top:16px">
-              <div class="stat" style="border-radius:18px">
-                <div style="display:flex;justify-content:space-between">
-                  <div class="small" style="font-weight:650">Контур воды</div>
-                  <div class="small">closed-loop</div>
-                </div>
-                <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
-                  <div class="logo" style="width:56px;height:56px;border-radius:18px">💧</div>
-                  <div style="flex:1">
-                    <div class="bar"><i style="width:78%"></i></div>
-                    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(255,255,255,.55)">
-                      <span>Сбор → очистка</span><span>Повторное использование</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="cards2">
-                <div class="stat" style="border-radius:18px">
-                  <div class="small" style="font-weight:650">🧠 IoT-датчики</div>
-                  <div style="margin-top:10px;font-size:14px;font-weight:750">Качество • расход • давление</div>
-                  <div class="small">Алерты + журнал событий</div>
-                </div>
-                <div class="stat" style="border-radius:18px">
-                  <div class="small" style="font-weight:650">☀️ Energy</div>
-                  <div style="margin-top:10px;font-size:14px;font-weight:750">Солнечные панели (опция)</div>
-                  <div class="small">Готово для удалённых локаций</div>
-                </div>
-              </div>
-
-              <div class="stat" style="border-radius:18px">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div class="small" style="font-weight:650">Состояние системы</div>
-                  <span class="pill" style="border-color:rgba(180,255,255,.20);background:rgba(180,255,255,.10);color:rgba(220,255,255,.95)">
-                    ● Stable
-                  </span>
-                </div>
-                <div class="cards3" style="margin-top:12px">
-                  <div class="stat" style="border-radius:14px;padding:12px">
-                    <div style="font-size:11px;color:rgba(255,255,255,.55)">pH</div>
-                    <div style="margin-top:6px;font-weight:750">7.2</div>
-                  </div>
-                  <div class="stat" style="border-radius:14px;padding:12px">
-                    <div style="font-size:11px;color:rgba(255,255,255,.55)">Turbidity</div>
-                    <div style="margin-top:6px;font-weight:750">0.9 NTU</div>
-                  </div>
-                  <div class="stat" style="border-radius:14px;padding:12px">
-                    <div style="font-size:11px;color:rgba(255,255,255,.55)">UV</div>
-                    <div style="margin-top:6px;font-weight:750">ON</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="small">* Демо-панель. В продукте метрики и пороги настраиваются под регион и нормы.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- PROBLEM -->
-  <section id="problem" class="section">
-    <div class="container">
-      <div class="secTitle">
-        <div class="pill">✨ Problem → Solution</div>
-        <h2>Вода становится самым дорогим ресурсом — особенно вне инфраструктуры</h2>
-        <p>Туристические объекты тратят большие объёмы воды и несут расходы на логистику, while ESG-требования усиливаются. AquaLoop снижает потребление за счёт замкнутого цикла серой воды.</p>
-      </div>
-
-      <div class="cards2">
-        <div class="grid">
-          <div class="glass card"><h3>💧 Водный стресс</h3><p>Засушливые регионы и сезонные пики создают дефицит и риск ограничения водозабора.</p></div>
-          <div class="glass card"><h3>👥 150–300 литров на гостя в сутки</h3><p>Типичный диапазон потребления для размещения с комфортом: душ, уборка, санитарные узлы.</p></div>
-        </div>
-        <div class="grid">
-          <div class="glass card"><h3>📍 Дорогая доставка воды</h3><p>В удалённых локациях стоимость м³ кратно выше из-за доставки, хранения и потерь.</p></div>
-          <div class="glass card"><h3>🛡️ ESG-требования</h3><p>Отчётность по воде и устойчивости повышает доверие инвесторов и B2B-клиентов.</p></div>
-        </div>
-      </div>
-
-      <div class="glass" style="margin-top:18px;padding:22px">
-        <div style="position:relative;z-index:1;display:grid;gap:16px;align-items:center">
-          <div>
-            <div style="font-size:14px;font-weight:750">Решение</div>
-            <p style="margin:10px 0 0;color:rgba(255,255,255,.70);line-height:1.6;font-size:13px">
-              AquaLoop — инновационная модульная система замкнутого повторного использования воды,
-              которая перерабатывает серую воду (души, раковины) через многоступенчатую очистку и
-              возвращает её для технических нужд (WC, мойка, полив).
-            </p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-              <span class="pill">♻️ до 60% экономии</span>
-              <span class="pill">🧠 IoT + Dashboard</span>
-              <span class="pill">☀️ solar-ready</span>
-              <span class="pill">🌧️ rain harvesting</span>
-            </div>
-          </div>
-          <div class="stat" style="border-radius:18px">
-            <div class="small" style="font-weight:650">Быстрый ориентир</div>
-            <div style="margin-top:10px;font-size:34px;font-weight:800;letter-spacing:-0.02em">−60%</div>
-            <div class="small">потребления свежей воды</div>
-            <div class="small" style="margin-top:10px;color:rgba(255,255,255,.55)">
-              Реальный эффект зависит от профиля потребления и режимов эксплуатации.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW -->
-  <section id="how" class="section">
-    <div class="container">
-      <div class="secTitle">
-        <div class="pill">✨ Технология</div>
-        <h2>Как работает AquaLoop</h2>
-        <p>Интерактивная схема многоступенчатой очистки серой воды и повторного использования — с мониторингом и отчётностью.</p>
-      </div>
-
-      <div class="steps">
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">💧</div><div class="n">1. Сбор серой воды</div><div class="d">Души и раковины → в накопительный контур. Без смешивания с чёрными стоками.</div><div class="bar"><i></i></div>
-        </div></div>
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">⚙️</div><div class="n">2. Механическая фильтрация</div><div class="d">Удаление взвесей и волос. Защита дальнейших ступеней, стабильная производительность.</div><div class="bar"><i></i></div>
-        </div></div>
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">🍃</div><div class="n">3. Биофильтр</div><div class="d">Био-реактор снижает органическую нагрузку, уменьшая потребность в реагентах.</div><div class="bar"><i></i></div>
-        </div></div>
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">🛡️</div><div class="n">4. Мембранная очистка</div><div class="d">Тонкая фильтрация для повторного использования в техн. нуждах: WC, мойка, полив.</div><div class="bar"><i></i></div>
-        </div></div>
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">✨</div><div class="n">5. УФ-дезинфекция</div><div class="d">Финальная защита: снижение микробиологических рисков перед подачей в контур.</div><div class="bar"><i></i></div>
-        </div></div>
-        <div class="glass step"><div style="position:relative;z-index:1">
-          <div class="pill">♻️</div><div class="n">6. Повторное использование</div><div class="d">Замкнутый цикл: до 60% меньше потребления чистой воды при правильной эксплуатации.</div><div class="bar"><i></i></div>
-        </div></div>
-      </div>
-
-      <div class="addons">
-        <div class="glass card"><h3>🧠 IoT-датчики</h3><p>Качество, расход, давление, уровни — мониторинг в реальном времени.</p></div>
-        <div class="glass card"><h3>📈 Impact Dashboard</h3><p>ESG-метрики, отчётность для инвесторов и управляющей компании.</p></div>
-        <div class="glass card"><h3>☀️ Солнечные панели</h3><p>Опционально автономный режим для удалённых локаций.</p></div>
-        <div class="glass card"><h3>🌧️ Сбор дождевой воды</h3><p>Дополнительный источник для техн. нужд и подпитки системы.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CALCULATOR -->
-  <section id="calculator" class="section">
-    <div class="container">
-      <div class="secTitle">
-        <div class="pill">✨ Ключевой блок</div>
-        <h2>Интерактивный калькулятор экономии и ESG-эффекта</h2>
-        <p>Введите параметры объекта — показатели обновятся мгновенно. Логика учитывает переработку серой воды, эффективность и тариф при перерасходе.</p>
-      </div>
-
-      <div class="calcGrid">
-        <!-- Inputs -->
-        <div class="glass" style="padding:20px">
-          <div style="position:relative;z-index:1">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-              <div>
-                <div style="font-weight:800">Параметры объекта</div>
-                <div class="small">Совет: если “Гостей/сутки” = 0, мы оценим по номерам и загрузке (2 гостя/номер).</div>
-              </div>
-              <span class="pill">🧠 Live</span>
-            </div>
-
-            <div class="grid" style="margin-top:14px">
-              <div class="field">
-                <label>Количество номеров</label>
-                <input id="rooms" class="input" type="number" min="0" value="20">
-              </div>
-
-              <div class="field">
-                <label>Средняя загрузка (%)</label>
-                <input id="occupancy" class="input" type="number" min="0" max="100" value="65">
-              </div>
-
-              <div class="field">
-                <label>Среднее количество гостей в сутки</label>
-                <input id="guestsPerDay" class="input" type="number" min="0" value="35">
-                <div class="small">Оценка при 0: <span id="inferredGuests" class="strong">0.0</span></div>
-              </div>
-
-              <div class="field">
-                <label>Потребление воды на человека (литры/сутки)</label>
-                <input id="waterPerGuest" class="input" type="number" min="0" value="220">
-                <div style="display:flex;justify-content:space-between;gap:10px" class="small">
-                  <span>Базовый лимит: <span class="strong">250 л</span></span>
-                  <span>Мультипликатор тарифа: <span id="tariffMult" class="strong">×1.00</span></span>
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Стоимость воды за м³</label>
-                <input id="pricePerM3" class="input" type="number" min="0" value="120">
-                <div class="small">Итоговый тариф с учётом перерасхода: <span id="adjustedPrice" class="strong">0.0</span></div>
-              </div>
-
-              <div class="field">
-                <label>Регион</label>
-                <div class="toggle">
-                  <button id="regionNormal" class="tbtn active" type="button">Обычный</button>
-                  <button id="regionRemote" class="tbtn" type="button">Удалённый (доставка)</button>
-                </div>
-                <div class="small">Коэффициент удалённости: <span id="remoteMult" class="strong">×1</span></div>
-              </div>
-
-              <div class="field">
-                <label>Оценочная стоимость системы (CAPEX) <span style="color:rgba(255,255,255,.40)">(для окупаемости)</span></label>
-                <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
-                  <input id="capex" class="input" type="number" min="0" value="0" placeholder="Напр. 1200000">
-                  <select id="currency" class="select">
-                    <option value="₽">₽</option>
-                    <option value="$">$</option>
-                    <option value="€">€</option>
-                  </select>
-                </div>
-                <div class="small">Если оставить 0 — используем мягкую ориентировочную оценку по масштабу (для демо).</div>
-              </div>
-
-              <div class="stat" style="border-radius:18px">
-                <div style="display:flex;justify-content:space-between" class="small">
-                  <span>Серая вода: 60%</span>
-                  <span>Эффективность: 70%</span>
-                </div>
-                <div class="small" style="margin-top:6px;color:rgba(255,255,255,.55)">
-                  Эти коэффициенты можно адаптировать под проект и локальные нормы.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Outputs -->
-        <div>
-          <div class="metrics">
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">💧 Сэкономленные литры в месяц</div>
-                <div id="mLiters" class="v">—</div>
-                <div class="hint">RecycledWater = TotalMonthly × 0.6 × 0.7</div>
-              </div>
-            </div>
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">💰 Экономия в деньгах (в месяц)</div>
-                <div id="mMoney" class="v">—</div>
-                <div class="hint">Savings = (RecycledM3 × AdjustedPrice) × RemoteMultiplier</div>
-              </div>
-            </div>
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">📉 Снижение потребления воды</div>
-                <div id="mReduction" class="v">—</div>
-                <div class="hint">Reduction% = RecycledWater / TotalMonthly</div>
-              </div>
-            </div>
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">🌍 Снижение нагрузки на экосистему</div>
-                <div id="mEco" class="v">—</div>
-                <div class="hint">Эвристическая оценка: усиление эффекта в удалённых регионах.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="metrics" style="margin-top:12px">
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">⏳ Примерный срок окупаемости</div>
-                <div id="mPayback" class="v">—</div>
-                <div class="hint">Payback = CAPEX / MonthlySavings. Ориентир, зависит от комплектации и сервиса.</div>
-              </div>
-            </div>
-            <div class="glass metric">
-              <div style="position:relative;z-index:1">
-                <div class="t">📊 ESG-impact показатель</div>
-                <div id="mEsg" class="v">—</div>
-                <div class="hint">Комбинированный индекс: объём экономии воды + % снижения + поправка на регион.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass dash">
-            <div style="position:relative;z-index:1">
-              <div class="dashHead">
-                <div>
-                  <div class="h">Impact Dashboard (демо)</div>
-                  <div class="s">Прогноз экономии по месяцам при стабильных вводных.</div>
-                </div>
-                <div class="small">🍃 CO₂ eq: <span id="mCo2" class="strong">—</span> кг <span style="color:rgba(255,255,255,.45)">(оценка)</span></div>
-              </div>
-
-              <div style="margin-top:12px">
-                <canvas id="chart" width="900" height="260"></canvas>
-              </div>
-
-              <div class="cards3" style="margin-top:12px">
-                <div class="stat" style="border-radius:18px">
-                  <div style="font-weight:750;color:rgba(255,255,255,.85);font-size:13px">Результаты в реальном времени</div>
-                  <div class="small">Пересчитываются при каждом изменении поля.</div>
-                </div>
-                <div class="stat" style="border-radius:18px">
-                  <div style="font-weight:750;color:rgba(255,255,255,.85);font-size:13px">Умный тариф</div>
-                  <div class="small">Мотивирует снижать перерасход выше 250 л/гость.</div>
-                </div>
-                <div class="stat" style="border-radius:18px">
-                  <div style="font-weight:750;color:rgba(255,255,255,.85);font-size:13px">Готово для ESG</div>
-                  <div class="small">Метрики для отчётности и зелёного финансирования.</div>
-                </div>
-              </div>
-
-              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:12px">
-                <a class="btn btnPrimary" href="#cta">Получить персональное предложение →</a>
-                <div class="small" style="color:rgba(255,255,255,.55)">
-                  * CO₂-эквивалент и ESG-скор — демонстрационные оценки. Для проекта задаются под регион и нормы.
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODEL -->
-  <section id="model" class="section">
-    <div class="container">
-      <div class="secTitle">
-        <div class="pill">✨ Коммерция</div>
-        <h2>Бизнес-модель: покупка или Water-as-a-Service</h2>
-        <p>Выберите формат внедрения — от капитальных поставок до сервиса, привязанного к фактической экономии.</p>
-      </div>
-
-      <div class="cards2">
-        <div class="glass card">
-          <div style="position:relative;z-index:1">
-            <div class="pill">🏢</div>
-            <h3>Прямая покупка</h3>
-            <p>Модульная поставка, монтаж и ввод в эксплуатацию. Доступ к мониторингу и отчётности.</p>
-            <div class="grid" style="margin-top:12px;color:rgba(255,255,255,.80);font-size:13px">
-              <div>✅ CAPEX + сервисные пакеты</div>
-              <div>✅ Гибкая модульность</div>
-              <div>✅ Интеграция в инфраструктуру</div>
-            </div>
-            <a class="btn" href="#cta" style="margin-top:14px">Запросить расчёт →</a>
-          </div>
-        </div>
-
-        <div class="glass card">
-          <div style="position:relative;z-index:1">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <div>
-                <div class="pill">♻️</div>
-              </div>
-              <span class="pill">💰 50% от экономии</span>
-            </div>
-            <h3>Water-as-a-Service</h3>
-            <p>Минимизируйте CAPEX: вы платите сервисный процент от подтверждённой экономии воды. Идеально для удалённых регионов.</p>
-            <div class="grid" style="margin-top:12px;color:rgba(255,255,255,.80);font-size:13px">
-              <div>✅ Низкий входной порог</div>
-              <div>✅ Обслуживание и мониторинг включены</div>
-              <div>✅ SLA и отчётность для ESG</div>
-            </div>
-            <a class="btn btnPrimary" href="#cta" style="margin-top:14px">Получить персональное предложение →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- IMPACT -->
-  <section id="impact" class="section">
-    <div class="container">
-      <div class="secTitle">
-        <div class="pill">✨ Устойчивость</div>
-        <h2>Социальный и экологический эффект</h2>
-        <p>AquaLoop — это не только экономия воды, но и укрепление локальных компетенций и поддержка экосистем.</p>
-      </div>
-
-      <div class="cards3">
-        <div class="glass card"><h3>👥 Обучение местных техников</h3><p>Программы обучения и регламенты обслуживания повышают автономность удалённых регионов.</p></div>
-        <div class="glass card"><h3>💧 Сохранение водоисточников</h3><p>Снижение водозабора и логистики поставок уменьшает давление на локальные ресурсы.</p></div>
-        <div class="glass card"><h3>🍃 Поддержка экосистем</h3><p>Меньше водного стресса — выше устойчивость биоценозов и рекреационных зон вокруг объектов.</p></div>
-      </div>
-
-      <div class="glass" style="margin-top:18px;padding:22px">
-        <div style="position:relative;z-index:1" class="cards3">
-          <div>
-            <div style="font-size:14px;font-weight:800">Гранты и зелёное финансирование</div>
-            <p style="margin-top:10px;color:rgba(255,255,255,.70);line-height:1.6;font-size:13px">
-              Impact-метрики и мониторинг позволяют формировать прозрачные отчёты для ESG и заявок на субсидии.
-            </p>
-          </div>
-          <div class="stat" style="border-radius:18px">
-            <div class="small" style="font-weight:650">Что получает инвестор</div>
-            <div class="grid" style="margin-top:10px;font-size:13px;color:rgba(255,255,255,.80)">
-              <div>✅ Данные об экономии воды</div>
-              <div>✅ Показатели устойчивости</div>
-              <div>✅ Риск-менеджмент по водному ресурсу</div>
-            </div>
-          </div>
-          <div class="stat" style="border-radius:18px">
-            <div class="small" style="font-weight:650">Что получает объект</div>
-            <div class="grid" style="margin-top:10px;font-size:13px;color:rgba(255,255,255,.80)">
-              <div>✅ Снижение операционных затрат</div>
-              <div>✅ Повышение resiliency</div>
-              <div>✅ Премиальный эко-имидж</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section id="cta" class="section" style="padding-bottom:110px">
-    <div class="container">
-      <div class="glass ctaBox">
-        <div style="position:relative;z-index:1" class="grid grid2">
-          <div>
-            <span class="pill">♻️ Close the Loop</span>
-            <h2 style="margin:14px 0 0;font-size:34px;letter-spacing:-0.02em">Start Saving Water Today</h2>
-            <p class="lead">Install AquaLoop. Close the Loop. Получите персональное предложение под вашу локацию, водный профиль и инфраструктуру.</p>
-
-            <div class="grid" style="margin-top:14px;font-size:13px;color:rgba(255,255,255,.80)">
-              <div>✅ Аудит водного контура</div>
-              <div>✅ Проектирование и монтаж</div>
-              <div>✅ Мониторинг + ESG-отчётность</div>
-            </div>
-          </div>
-
-          <div class="formCard">
-            <div style="font-size:14px;font-weight:800;margin-bottom:10px">Форма заявки</div>
-            <form id="leadForm" class="grid" style="gap:10px">
-              <div class="field">
-                <label>Название объекта</label>
-                <input class="input" required placeholder="Напр. Desert Glamp Resort">
-              </div>
-
-              <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
-                <div class="field">
-                  <label>Страна</label>
-                  <input class="input" required placeholder="Казахстан">
-                </div>
-                <div class="field">
-                  <label>Телефон</label>
-                  <input class="input" placeholder="+7 …">
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Email</label>
-                <input class="input" required type="email" placeholder="team@company.com">
-              </div>
-
-              <button class="btn btnPrimary" type="submit">Получить предложение →</button>
-              <div id="formStatus" class="ok" style="display:none"></div>
-              <div class="small" style="font-size:11px;color:rgba(255,255,255,.55)">
-                Нажимая кнопку, вы соглашаетесь на обработку контактных данных (демо-форма).
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:14px" class="small">
-        <div>📍 Для засушливых и удалённых регионов • турбазы • кемпинги • глэмпинги • small hotels</div>
-        <div>🍃 AquaLoop © <span id="year"></span></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="footerFade"></div>
-
-  <script>
-    // ---------- Helpers ----------
-    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-    const fmtInt = (n) => Math.round(n).toLocaleString("ru-RU");
-    const fmtMoney = (n, cur) => `${Math.round(n).toLocaleString("ru-RU")} ${cur}`;
-
-    // ---------- Sticky live counter ----------
-    let liters = 4250000;
-    let co2 = 158000;
-    const litersEl = document.getElementById("liters");
-    const co2El = document.getElementById("co2");
-
-    setInterval(() => {
-      liters += 8 + Math.floor(Math.random() * 10);
-      co2 += 1 + Math.floor(Math.random() * 3);
-      litersEl.textContent = fmtInt(liters);
-      co2El.textContent = fmtInt(co2);
-    }, 1000);
-
-    // ---------- Calculator state ----------
-    const els = {
-      rooms: document.getElementById("rooms"),
-      occupancy: document.getElementById("occupancy"),
-      guestsPerDay: document.getElementById("guestsPerDay"),
-      waterPerGuest: document.getElementById("waterPerGuest"),
-      pricePerM3: document.getElementById("pricePerM3"),
-      capex: document.getElementById("capex"),
-      currency: document.getElementById("currency"),
-      regionNormal: document.getElementById("regionNormal"),
-      regionRemote: document.getElementById("regionRemote"),
-
-      inferredGuests: document.getElementById("inferredGuests"),
-      tariffMult: document.getElementById("tariffMult"),
-      adjustedPrice: document.getElementById("adjustedPrice"),
-      remoteMult: document.getElementById("remoteMult"),
-
-      mLiters: document.getElementById("mLiters"),
-      mMoney: document.getElementById("mMoney"),
-      mReduction: document.getElementById("mReduction"),
-      mEco: document.getElementById("mEco"),
-      mPayback: document.getElementById("mPayback"),
-      mEsg: document.getElementById("mEsg"),
-      mCo2: document.getElementById("mCo2"),
-    };
-
-    let region = "normal";
-
-    function compute(){
-      const rooms = Number(els.rooms.value || 0);
-      const occupancy = clamp(Number(els.occupancy.value || 0), 0, 100);
-      const guestsPerDayIn = Number(els.guestsPerDay.value || 0);
-      const waterPerGuest = Number(els.waterPerGuest.value || 0);
-      const pricePerM3 = Number(els.pricePerM3.value || 0);
-      const capex = Number(els.capex.value || 0);
-      const currency = els.currency.value;
-
-      const grayWaterRatio = 0.6;
-      const recycleEfficiency = 0.7;
-      const remoteMultiplier = (region === "remote") ? 4 : 1;
-
-      const inferredGuests = Math.max(0, rooms) * (occupancy * 0.01) * 2;
-      const gpd = guestsPerDayIn > 0 ? guestsPerDayIn : inferredGuests;
-
-      const totalDaily = gpd * waterPerGuest; // liters
-      const totalMonthly = totalDaily * 30;
-
-      const grayWater = totalMonthly * grayWaterRatio;
-      const recycledWater = grayWater * recycleEfficiency;
-      const recycledM3 = recycledWater / 1000;
-
-      const limit = 250;
-      let adjustedPrice = pricePerM3;
-      let highTariffMultiplier = 1;
-      if (waterPerGuest > limit){
-        const overuseRatio = waterPerGuest / limit;
-        highTariffMultiplier = 1 + (overuseRatio - 1) * 0.5;
-        adjustedPrice = pricePerM3 * highTariffMultiplier;
-      }
-
-      const basePrice = recycledM3 * adjustedPrice;
-      const realSavings = basePrice * remoteMultiplier;
-
-      const reductionPct = totalMonthly > 0 ? (recycledWater / totalMonthly) * 100 : 0;
-      const ecosystemLoadPct = clamp(reductionPct * (region === "remote" ? 1.15 : 1), 0, 75);
-
-      const defaultCapex = Math.max(0, rooms) * 22000 + 180000;
-      const capexUsed = capex > 0 ? capex : defaultCapex;
-      const monthlySavings = realSavings;
-      const paybackMonths = monthlySavings > 0 ? capexUsed / monthlySavings : Infinity;
-
-      const esgScore = clamp((recycledM3 * 1.8 + reductionPct * 0.55) * (region === "remote" ? 1.05 : 1), 0, 100);
-
-      const co2Kg = recycledM3 * 0.35 * 1000 * (region === "remote" ? 1.25 : 1);
-
-      return {
-        inferredGuests, gpd, recycledWater, realSavings, reductionPct,
-        ecosystemLoadPct, paybackMonths, esgScore, adjustedPrice, highTariffMultiplier, remoteMultiplier, currency,
-        monthlySavings, co2Kg
-      };
-    }
-
-    // ---------- Simple chart (12 months line) ----------
-    const chart = document.getElementById("chart");
-    const ctx = chart.getContext("2d");
-    const months = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
-
-    function drawChart(base){
-      const dpr = window.devicePixelRatio || 1;
-      const cssW = chart.clientWidth || 900;
-      const cssH = 220;
-      chart.width = Math.floor(cssW * dpr);
-      chart.height = Math.floor(cssH * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-
-      ctx.clearRect(0,0,cssW,cssH);
-
-      const vals = months.map((_, i)=>{
-        const season = 1 + Math.sin((i/12)*Math.PI*2)*0.06;
-        return Math.max(0, base * season);
-      });
-      const maxV = Math.max(1, ...vals);
-
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(255,255,255,0.10)";
-      for(let i=1;i<=3;i++){
-        const y = (cssH/4)*i;
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cssW,y); ctx.stroke();
-      }
-
-      ctx.fillStyle = "rgba(255,255,255,0.55)";
-      ctx.font = "12px system-ui";
-      months.forEach((m,i)=>{
-        const x = (cssW/(months.length-1))*i;
-        if(i%2===0) ctx.fillText(m, x-10, cssH-6);
-      });
-
-      ctx.strokeStyle = "rgba(125,255,255,0.90)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      vals.forEach((v,i)=>{
-        const x = (cssW/(months.length-1))*i;
-        const y = cssH - 30 - (v/maxV)*(cssH-60);
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
-    }
-
-    function render(){
-      const c = compute();
-
-      els.inferredGuests.textContent = c.inferredGuests.toFixed(1);
-      els.tariffMult.textContent = "×" + c.highTariffMultiplier.toFixed(2);
-      els.adjustedPrice.textContent = c.adjustedPrice.toFixed(1);
-      els.remoteMult.textContent = "×" + c.remoteMultiplier;
-
-      els.mLiters.textContent = fmtInt(c.recycledWater) + " л";
-      els.mMoney.textContent = fmtMoney(c.realSavings, c.currency);
-      els.mReduction.textContent = c.reductionPct.toFixed(1) + "%";
-      els.mEco.textContent = c.ecosystemLoadPct.toFixed(1) + "%";
-
-      const payback = (Number.isFinite(c.paybackMonths) && c.paybackMonths < 999) ? (c.paybackMonths.toFixed(1) + " мес.") : "—";
-      els.mPayback.textContent = payback;
-      els.mEsg.textContent = Math.round(c.esgScore) + "/100";
-      els.mCo2.textContent = fmtInt(c.co2Kg);
-
-      drawChart(c.monthlySavings);
-    }
-
-    ["input","change"].forEach(evt=>{
-      document.addEventListener(evt, (e)=>{
-        if(e.target && (e.target.classList.contains("input") || e.target.classList.contains("select"))) render();
-      }, true);
-    });
-
-    els.regionNormal.addEventListener("click", ()=>{
-      region="normal";
-      els.regionNormal.classList.add("active");
-      els.regionRemote.classList.remove("active");
-      render();
-    });
-    els.regionRemote.addEventListener("click", ()=>{
-      region="remote";
-      els.regionRemote.classList.add("active");
-      els.regionNormal.classList.remove("active");
-      render();
-    });
-
-    window.addEventListener("resize", ()=> render());
-
-    // ---------- CTA form demo submit ----------
-    document.getElementById("leadForm").addEventListener("submit", (e)=>{
-      e.preventDefault();
-      const status = document.getElementById("formStatus");
-      status.style.display = "block";
-      status.textContent = "Заявка отправлена (демо). Мы свяжемся с вами для уточнения вводных.";
-      e.target.reset();
-    });
-
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // initial render
-    render();
-  </script>
 </body>
 </html>
