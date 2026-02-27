@@ -17,43 +17,52 @@ body { font-family:'Inter',sans-serif; background:#f5f7fb; color:#1f2937; }
 
 /* Freedom-like soft gradient */
 .hero-gradient {
-background: radial-gradient(circle at 20% 30%, #dbeafe, #f5f7fb 40%),
-            linear-gradient(120deg,#e0f2fe,#f5f7fb,#dcfce7);
+  background: radial-gradient(circle at 20% 30%, #dbeafe, #f5f7fb 40%),
+              linear-gradient(120deg,#e0f2fe,#f5f7fb,#dcfce7);
 }
 
 .glass {
-background: rgba(255,255,255,0.7);
-backdrop-filter: blur(14px);
-border:1px solid rgba(0,0,0,0.05);
-box-shadow:0 10px 30px rgba(0,0,0,0.05);
-position: relative;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(14px);
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+  position: relative;
 }
 
 .card {
-background:white;
-border-radius:16px;
-padding:28px;
-box-shadow:0 8px 24px rgba(0,0,0,0.06);
-transition:.25s ease;
+  background:white;
+  border-radius:16px;
+  padding:28px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.06);
+  transition:.25s ease;
 }
 
 .card:hover {
-transform:translateY(-6px);
-box-shadow:0 20px 50px rgba(0,0,0,0.12);
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(0,0,0,0.12);
 }
 
 .btn-primary {
-background: linear-gradient(135deg,#22c55e,#3b82f6);
-color:white;
-padding:14px 26px;
-border-radius:12px;
-font-weight:600;
-transition:.25s;
+  background: linear-gradient(135deg,#22c55e,#3b82f6);
+  color:white;
+  padding:14px 26px;
+  border-radius:12px;
+  font-weight:600;
+  transition:.25s;
 }
 
 .btn-primary:hover { opacity:.9; transform:translateY(-2px); }
 
 #map { height:420px; border-radius:16px; }
+
+/* Градиентные заголовки */
+h1, h2, h3 {
+  background: linear-gradient(90deg, #22c55e, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 </style>
 </head>
 
@@ -84,8 +93,7 @@ transition:.25s;
 </h1>
 
 <p class="mt-6 text-lg text-slate-600">
-ZHINO направляет AI‑нагрузку в те дата‑центры, где прямо сейчас
-ниже потребление воды, энергии и CO₂ — автоматически.
+ZHINO направляет AI‑нагрузку в те дата‑центры, где прямо сейчас ниже потребление воды, энергии и CO₂ — автоматически.
 </p>
 
 <!-- Кнопка запроса пилота -->
@@ -124,8 +132,7 @@ ZHINO направляет AI‑нагрузку в те дата‑центры
 <h2 class="text-3xl font-semibold mb-6">Что делает ZHINO</h2>
 <p class="text-lg text-slate-600 leading-relaxed">
 Мы добавляем интеллектуальный слой между AI‑сервисом и регионами вычислений.
-ZHINO анализирует климат, источник энергии и эффективность охлаждения
-— и выбирает оптимальную точку выполнения.
+ZHINO анализирует климат, источник энергии и эффективность охлаждения — и выбирает оптимальную точку выполнения.
 </p>
 </div>
 </section>
@@ -222,63 +229,57 @@ let movingMarker;
 
 // CREATE MARKERS
 dcs.forEach(dc => {
-const marker = L.circleMarker(dc.coords,{radius:7,color:'#22c55e'}).addTo(map);
-
-marker.on('click',()=>selectDC(dc, marker));
+  const marker = L.circleMarker(dc.coords,{radius:7,color:'#22c55e'}).addTo(map);
+  marker.on('click',()=>selectDC(dc, marker));
 });
 
 function selectDC(dc, marker){
-if(selectedMarkers.length===2){
-selectedMarkers=[];
-if(routeLine) map.removeLayer(routeLine);
-if(movingMarker) map.removeLayer(movingMarker);
-}
+  if(selectedMarkers.length===2){
+    selectedMarkers=[];
+    if(routeLine) map.removeLayer(routeLine);
+    if(movingMarker) map.removeLayer(movingMarker);
+  }
+  selectedMarkers.push({dc, marker});
+  // Update info panel
+  dcName.innerText = dc.name;
+  temp.innerText = dc.temp;
+  energy.innerText = dc.energy;
+  waterImpact.innerText = dc.water;
+  co2Impact.innerText = dc.co2;
+  status.innerText = "Выбран для сравнения";
 
-selectedMarkers.push({dc, marker});
-
-// Update info panel
- dcName.innerText = dc.name;
- temp.innerText = dc.temp;
- energy.innerText = dc.energy;
- waterImpact.innerText = dc.water;
- co2Impact.innerText = dc.co2;
- status.innerText = "Выбран для сравнения";
-
-if(selectedMarkers.length===2){
-animateRoute(selectedMarkers[0].dc, selectedMarkers[1].dc);
-}
+  if(selectedMarkers.length===2){
+    animateRoute(selectedMarkers[0].dc, selectedMarkers[1].dc);
+  }
 }
 
 // ANIMATION OF AI REQUEST ROUTING
 function animateRoute(from,to){
-if(routeLine) map.removeLayer(routeLine);
-if(movingMarker) map.removeLayer(movingMarker);
+  if(routeLine) map.removeLayer(routeLine);
+  if(movingMarker) map.removeLayer(movingMarker);
 
-routeLine = L.polyline([from.coords,to.coords],{color:'#3b82f6',weight:3,dashArray:'6 6'}).addTo(map);
+  routeLine = L.polyline([from.coords,to.coords],{color:'#3b82f6',weight:3,dashArray:'6 6'}).addTo(map);
 
-let progress = 0;
-movingMarker = L.circleMarker(from.coords,{radius:8,color:'#3b82f6'}).addTo(map);
+  let progress = 0;
+  movingMarker = L.circleMarker(from.coords,{radius:8,color:'#3b82f6'}).addTo(map);
 
-const interval = setInterval(()=>{
-progress += 0.02;
-
-const lat = from.coords[0] + (to.coords[0]-from.coords[0])*progress;
-const lng = from.coords[1] + (to.coords[1]-from.coords[1])*progress;
-
-movingMarker.setLatLng([lat,lng]);
-
-if(progress>=1){
-clearInterval(interval);
-status.innerText = "ZHINO перенаправил нагрузку в более эффективный регион";
-}
-},30);
+  const interval = setInterval(()=>{
+    progress += 0.02;
+    const lat = from.coords[0] + (to.coords[0]-from.coords[0])*progress;
+    const lng = from.coords[1] + (to.coords[1]-from.coords[1])*progress;
+    movingMarker.setLatLng([lat,lng]);
+    if(progress>=1){
+      clearInterval(interval);
+      status.innerText = "ZHINO перенаправил нагрузку в более эффективный регион";
+    }
+  },30);
 }
 
 // DEMO SLIDER
 requests.oninput = () => {
-const v = requests.value;
-water.innerText = (v*1.8).toFixed(0)+" м³ (-30%)";
-co2.innerText = (v*0.35).toFixed(0)+" т (-22%)";
+  const v = requests.value;
+  water.innerText = (v*1.8).toFixed(0)+" м³ (-30%)";
+  co2.innerText = (v*0.35).toFixed(0)+" т (-22%)";
 };
 requests.oninput();
 
